@@ -1,19 +1,18 @@
 import pygame as pg
 
-#pg.init()
+pg.init()
 
 #dimensioni della finestra
 WIDTH, HEIGHT = 1800, 930
 screen = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption("Building Visualizer")
 
 #class per il building
 class Building:
     def __init__(self):
-        self.brick = pg.image.load('building_brick.png')
-        self.build_bottom = pg.image.load('building_cement_bottom.png')
-        self.build_top = pg.image.load('building_cement_top.png')
-        self.build_ledge = pg.image.load('building_ledge.png')
+        self.brick = pg.image.load('building/building_brick.png')
+        self.build_bottom = pg.image.load('building/building_cement_bottom.png')
+        self.build_top = pg.image.load('building/building_cement_top.png')
+        self.build_ledge = pg.image.load('building/building_ledge.png')
         self.door_fixed = pg.image.load('door/door_fixed.png') 
         self.initialize_building()
 
@@ -25,7 +24,6 @@ class Building:
         self.door_fixed = pg.transform.scale(self.door_fixed, (100 ,350))
 
     def draw(self, surface):
-        # Posiziona le immagini sullo schermo
         screen_devided = WIDTH/2 - 900/2
         surface.blit(self.brick, (screen_devided, HEIGHT- 925))
         surface.blit(self.brick, (screen_devided, HEIGHT-675))
