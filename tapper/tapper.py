@@ -1,22 +1,21 @@
 import pygame as pg
-from sys import exit
 
 # Inizializzazione di Pygame
 pg.init()
 
 # Costanti
-WIDTH, HEIGHT = 1000, 800
+WINDOW_WIDTH, WINDOW_HEIGHT = 512, 480
 TITLE = "Tapper"
-BARISTA_PERCORSO_SHEET = '/home/andrew/projects/ArchAde/tapper/sprites/Bartender.png'
+BARISTA_PERCORSO_SHEET = './sprites/Bartender.png'
 
 
-screen = pg.display.set_mode((WIDTH, HEIGHT))
+screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pg.display.set_caption(TITLE)
 
 color_key = (0, 48, 80)
 
 def get_sprite(x, y, width, height, image):
-    sprite_sheet = pg.image.load(image).convert()
+    sprite_sheet = pg.image.load(image).convert_alpha()
     sprite_sheet.set_colorkey(color_key)
 
     rect = pg.Rect(x, y, width, height)
@@ -26,19 +25,22 @@ def get_sprite(x, y, width, height, image):
     return sprite
 
 def get_row_sprites(start_x, start_y, frame_width, frame_height, frame_count, image):
-    sheet = pg.image.load(image).convert()
-    sheet.set_colorkey(color_key)
-    sprites = []
+    try:
+        sheet = pg.image.load(image).convert()
+        sheet.set_colorkey(color_key)
+        sprites = []
 
-    for i in range(frame_count):
-        rect = pg.Rect(start_x + i * frame_width, start_y, frame_width, frame_height)
-        frame = pg.Surface((frame_width, frame_height), pg.SRCALPHA)
-        frame.blit(sheet, (0, 0), rect)
-        sprites.append(frame)
+        for i in range(frame_count):
+            rect = pg.Rect(start_x + i * frame_width, start_y, frame_width, frame_height)
+            frame = pg.Surface((frame_width, frame_height), pg.SRCALPHA)
+            frame.blit(sheet, (0, 0), rect)
+            sprites.append(frame)
 
-    return sprites
+        return sprites
+    except Exception as e:
+        print(f"Errore {e} nel caricare l'immagine")
 
-class Barista:
+class Bartender:
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -60,9 +62,23 @@ class Barista:
             self.animation_timer = 0
             self.current_frame = (self.current_frame + 1) % len(self.current_sprites)
 
+    # def draw(self, surface):
+    #     current_sprite = self.current_sprites[self.current_frame]
+    #     surface.blit(current_sprite, (self.x, self.y))
+
     def draw(self, surface):
         current_sprite = self.current_sprites[self.current_frame]
-        surface.blit(current_sprite, (self.x, self.y))
+        scaled_sprite = pg.transform.scale(current_sprite, (66, 102)) 
+        surface.blit(scaled_sprite, (self.x, self.y))
+
+    def serve(self):
+        self.current_sprites = self.serving_sprites
+        self.current_frame = 0
+    
+    def idle(self):
+        self.current_sprites = self.idle_sprites
+        self.current_frame = 0
+
 
 class Bancone:
     def __init__(self):
@@ -72,7 +88,7 @@ class Bancone:
 def main():
     clock = pg.time.Clock()
     
-    bartender = Barista(50, 400)
+    bartender = Bartender(500, 400)
 
     running = True
     while running:
@@ -80,12 +96,26 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
-                pg.quit()
-                exit()
+
+        welcoming_menu = pg.image.load("./sprites/tapper_menu.png")
+
+        screen.blit(welcoming_menu, (0, 0))
+
+        for event in pg.event.get():
+            if event.type == pg.K_RETURN:
+                screen.fill((0, 0, 0))
+                bartender.draw(screen)
+
+        keys = pg.key.get_pressed()
+
+        # if keys[pg.K_RETURN]:
+        #     print("Tasto invio premuto")
+        #     screen.fill((0, 0, 0))
+        #     bartender.draw(screen)
+
 
         dt = clock.tick(60) / 1000.0
-        screen.fill((0, 0, 0))
-
         bartender.update(dt)
-        bartender.draw(screen)
+        pg.display.update()
+    pg.quit()
 main()
