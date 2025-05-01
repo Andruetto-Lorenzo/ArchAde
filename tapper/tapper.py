@@ -1,5 +1,4 @@
 import pygame as pg
-# from time import sleep
 
 # Inizializzazione di Pygame
 pg.init()
@@ -7,17 +6,20 @@ pg.init()
 # Costanti
 WINDOW_WIDTH, WINDOW_HEIGHT = 1000, 800
 TITLE = "Tapper"
-BARISTA_PERCORSO_SHEET = './sprites/Bartender.png'
+BARISTA_DIR_SHEET = './sprites/Bartender.png'
 
 # Colori
-white = (255, 255, 255)
-black = (0, 0, 0)
-blue = (0, 27, 74)
+COLORS = {
+    "white": (255, 255, 255),
+    "black": (0, 0, 0),
+    "blue": (0, 27, 74)
+}
 
+LOADING_DURATION = 5000
 screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pg.display.set_caption(TITLE)
 
-color_key = (0, 48, 80)
+color_key = (0, 48, 48)
 
 # Classe barista
 class Bartender:
@@ -25,10 +27,10 @@ class Bartender:
         self.x = x
         self.y = y
 
-        self.sprite_sheet = BARISTA_PERCORSO_SHEET
+        self.sprite_sheet = BARISTA_DIR_SHEET
 
-        self.idle_sprites = get_row_sprites(0, 0, 33, 66, 2, BARISTA_PERCORSO_SHEET)
-        self.serving_sprites = get_row_sprites(0, 66, 33, 66, 8, BARISTA_PERCORSO_SHEET)
+        self.idle_sprites = get_row_sprites(0, 0, 33, 66, 2, BARISTA_DIR_SHEET)
+        self.serving_sprites = get_row_sprites(0, 66, 33, 66, 8, BARISTA_DIR_SHEET)
 
         self.current_sprites = self.idle_sprites
         self.current_frame = 0
@@ -92,22 +94,89 @@ def get_row_sprites(start_x, start_y, frame_width, frame_height, frame_count, im
     except Exception as e:
         print(f"Errore {e} nel caricare l'immagine")
 
+def avoid_loop_printing(message, count=0):
+    count += 1
+    if count > 1:
+        pass
+    print(str(message))
+
+# def main() -> None:
+#     clock = pg.time.Clock()
+
+#     bartender = Bartender(500, 400)
+
+#     font = pg.font.Font("freesansbold.ttf", 16)
+#     press_enter = font.render("Press [ENTER] to play", True, COLORS['white'], COLORS['black'])
+#     textRect = press_enter.get_rect()
+#     textRect.center = (WINDOW_WIDTH // 2, 550)
+
+#     welcoming_menu = pg.image.load("./sprites/tapper_menu.png")
+#     points = pg.image.load("./sprites/points.png")
+
+#     running = True
+#     in_menu = True
+#     loading = False
+#     game_started = False
+
+#     start_time = None
+
+#     while running:
+#         dt = clock.tick(60) / 1000.0
+
+#         for event in pg.event.get():
+#             if event.type == pg.QUIT:
+#                 running = False
+#             elif event.type == pg.KEYDOWN:
+#                 if event.key == pg.K_RETURN and in_menu:
+#                     avoid_loop_printing("Tasto invio premuto")
+#                     in_menu = False
+#                     loading = True
+#                     start_time = pg.time.get_ticks()
+
+#         if in_menu:
+#             screen.fill(COLORS['black'])
+#             screen.blit(welcoming_menu, ((WINDOW_WIDTH // 2) / 2, 0))
+#             screen.blit(press_enter, textRect)
+
+#         elif loading:
+#             screen.fill(COLORS['blue'])
+#             screen.blit(points, ((WINDOW_WIDTH // 2) / 2, (WINDOW_HEIGHT // 2) / 2))            
+#             bartender.update(dt)
+#             bartender.draw(screen)
+
+#             current_time = pg.time.get_ticks()
+#             if current_time - start_time >= LOADING_DURATION:
+#                 loading = False
+#                 game_started = True
+
+#         elif game_started:
+#             screen.fill((0, 100, 200))  # Colore di sfondo del gioco vero e proprio
+#             bartender.update(dt)
+#             bartender.draw(screen)
+
+#         pg.display.update()
+
+#     pg.quit()
+
+
 def main():
     clock = pg.time.Clock()
-    
+
     bartender = Bartender(500, 400)
 
     font = pg.font.Font("freesansbold.ttf", 16)
-    press_enter = font.render("Press [ENTER] to play", True, white, black)
+    press_enter = font.render("Press [ENTER] to play", True, COLORS['white'], COLORS['black'])
     textRect = press_enter.get_rect()
-    textRect.center = (WINDOW_WIDTH // 2, 470)
+    textRect.center = (WINDOW_WIDTH // 2, 550)
 
     welcoming_menu = pg.image.load("./sprites/tapper_menu.png")
     points = pg.image.load("./sprites/points.png")
 
-    in_game = False
-
+    loading = False
     running = True
+    in_menu = True
+    game_started = False
+
     while running:
         # Riconoscimento di chiusura del gioco.
         for event in pg.event.get():
@@ -115,21 +184,31 @@ def main():
                 running = False
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_RETURN:
-                    in_game = True
-        if in_game:
-            screen.fill(blue)
-            screen.blit(points, (WINDOW_WIDTH // 2, 0))
-            # sleep(50)
-            # screen.fill(black)
-            # bartender.draw(screen)
+                    avoid_loop_printing("Tasto invio premuto")
+                    start_time = pg.time.get_ticks()
+                    in_menu = False
+                    loading = True
 
-        if not in_game:
-            screen.fill(black)
-            screen.blit(welcoming_menu, (0, 0))
+        if in_menu:
+            screen.fill(COLORS['black'])
+            screen.blit(welcoming_menu, ((WINDOW_WIDTH // 2) / 2, 0))
             screen.blit(press_enter, textRect)
 
-        dt = clock.tick(60) / 1000.0
-        bartender.update(dt)
+        elif loading:
+            screen.fill(COLORS['blue'])
+            screen.blit(points, ((WINDOW_WIDTH // 2) / 2, (WINDOW_HEIGHT // 2) / 2))            
+
+            current_time = pg.time.get_ticks()
+            if start_time and current_time - start_time >= LOADING_DURATION:
+                loading = False
+                game_started = True
+
+        elif game_started:
+            screen.fill(COLORS['black'])
+            dt = clock.tick(60) / 1000.0
+            bartender.update(dt)
+            bartender.draw(screen)
+            
         pg.display.update()
     pg.quit()
 main()
