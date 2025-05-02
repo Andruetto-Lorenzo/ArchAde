@@ -96,68 +96,9 @@ def get_row_sprites(start_x, start_y, frame_width, frame_height, frame_count, im
 
 def avoid_loop_printing(message, count=0):
     count += 1
-    if count > 1:
+    if not count:
         pass
     print(str(message))
-
-# def main() -> None:
-#     clock = pg.time.Clock()
-
-#     bartender = Bartender(500, 400)
-
-#     font = pg.font.Font("freesansbold.ttf", 16)
-#     press_enter = font.render("Press [ENTER] to play", True, COLORS['white'], COLORS['black'])
-#     textRect = press_enter.get_rect()
-#     textRect.center = (WINDOW_WIDTH // 2, 550)
-
-#     welcoming_menu = pg.image.load("./sprites/tapper_menu.png")
-#     points = pg.image.load("./sprites/points.png")
-
-#     running = True
-#     in_menu = True
-#     loading = False
-#     game_started = False
-
-#     start_time = None
-
-#     while running:
-#         dt = clock.tick(60) / 1000.0
-
-#         for event in pg.event.get():
-#             if event.type == pg.QUIT:
-#                 running = False
-#             elif event.type == pg.KEYDOWN:
-#                 if event.key == pg.K_RETURN and in_menu:
-#                     avoid_loop_printing("Tasto invio premuto")
-#                     in_menu = False
-#                     loading = True
-#                     start_time = pg.time.get_ticks()
-
-#         if in_menu:
-#             screen.fill(COLORS['black'])
-#             screen.blit(welcoming_menu, ((WINDOW_WIDTH // 2) / 2, 0))
-#             screen.blit(press_enter, textRect)
-
-#         elif loading:
-#             screen.fill(COLORS['blue'])
-#             screen.blit(points, ((WINDOW_WIDTH // 2) / 2, (WINDOW_HEIGHT // 2) / 2))            
-#             bartender.update(dt)
-#             bartender.draw(screen)
-
-#             current_time = pg.time.get_ticks()
-#             if current_time - start_time >= LOADING_DURATION:
-#                 loading = False
-#                 game_started = True
-
-#         elif game_started:
-#             screen.fill((0, 100, 200))  # Colore di sfondo del gioco vero e proprio
-#             bartender.update(dt)
-#             bartender.draw(screen)
-
-#         pg.display.update()
-
-#     pg.quit()
-
 
 def main():
     clock = pg.time.Clock()
