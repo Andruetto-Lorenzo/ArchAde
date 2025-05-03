@@ -44,14 +44,9 @@ class Bartender:
             self.animation_timer = 0
             self.current_frame = (self.current_frame + 1) % len(self.current_sprites)
 
-    # def draw(self, surface):
-    #     current_sprite = self.current_sprites[self.current_frame]
-    #     surface.blit(current_sprite, (self.x, self.y))
-
     def draw(self, surface):
         current_sprite = self.current_sprites[self.current_frame]
-        scaled_sprite = pg.transform.scale(current_sprite, (66, 102)) 
-        surface.blit(scaled_sprite, (self.x, self.y))
+        surface.blit(current_sprite, (self.x, self.y))
 
     def serve(self):
         self.current_sprites = self.serving_sprites
@@ -105,8 +100,8 @@ def main():
 
     bartender = Bartender(500, 400)
 
-    font = pg.font.Font("freesansbold.ttf", 16)
-    press_enter = font.render("Press [ENTER] to play", True, COLORS['white'], COLORS['black'])
+    font = pg.font.SysFont("tapper", 16)
+    press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
     textRect = press_enter.get_rect()
     textRect.center = (WINDOW_WIDTH // 2, 550)
 
