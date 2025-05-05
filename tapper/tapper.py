@@ -62,7 +62,6 @@ class Bancone:
         # self.clienti = 
         pass
 
-
 def get_sprite(x, y, width, height, image):
     sprite_sheet = pg.image.load(image).convert_alpha()
     sprite_sheet.set_colorkey(color_key)
@@ -108,7 +107,7 @@ def main():
     welcoming_menu = pg.image.load("./sprites/tapper_menu.png")
     points = pg.image.load("./sprites/points.png")
 
-    loading = False
+    loading = True
     running = True
     in_menu = True
     game_started = False
@@ -123,7 +122,6 @@ def main():
                     avoid_loop_printing("Tasto invio premuto")
                     start_time = pg.time.get_ticks()
                     in_menu = False
-                    loading = True
 
         if in_menu:
             screen.fill(COLORS['black'])
