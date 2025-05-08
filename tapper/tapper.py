@@ -15,7 +15,7 @@ COLORS = {
     "blue": (0, 27, 74)
 }
 
-LOADING_DURATION = 5000
+LOADING_DURATION = 3000
 screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pg.display.set_caption(TITLE)
 
