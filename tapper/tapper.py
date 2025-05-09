@@ -12,14 +12,13 @@ BARISTA_DIR_SHEET = './sprites/Bartender.png'
 COLORS = {
     "white": (255, 255, 255),
     "black": (0, 0, 0),
-    "blue": (0, 27, 74)
+    "blue": (0, 27, 74),
+    "color_key": (17, 88, 159)
 }
 
 LOADING_DURATION = 3000
 screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pg.display.set_caption(TITLE)
-
-color_key = (0, 48, 48)
 
 # Classe barista
 class Bartender:
@@ -29,8 +28,8 @@ class Bartender:
 
         self.sprite_sheet = BARISTA_DIR_SHEET
 
-        self.idle_sprites = get_row_sprites(0, 0, 33, 66, 2, BARISTA_DIR_SHEET)
-        self.serving_sprites = get_row_sprites(0, 66, 33, 66, 8, BARISTA_DIR_SHEET)
+        self.idle_sprites = self.get_idle_sprites(2, BARISTA_DIR_SHEET)
+        # self.serving_sprites = get_row_sprites(0, 66, 33, 66, 8, BARISTA_DIR_SHEET)
 
         self.current_sprites = self.idle_sprites
         self.current_frame = 0
@@ -56,6 +55,41 @@ class Bartender:
         self.current_sprites = self.idle_sprites
         self.current_frame = 0
 
+    def get_idle_sprites(self, frame_count, image):
+        try:
+            sheet = pg.image.load(image).convert()
+            sheet.set_colorkey(COLORS['color_key'])
+            sprites = []
+
+            first_image_startx = 0
+            first_image_starty = 42
+            first_image_width = 32
+            first_image_height = 60
+
+            second_image_startx  = 2
+            second_image_starty = 42
+            second_image_width = 32
+            second_image_height = 60 
+
+            count = 0
+            for i in range(frame_count):
+                if not count:
+                    rect = pg.Rect(first_image_startx + i * first_image_width, 
+                                   first_image_starty, first_image_width, first_image_height)
+                    frame = pg.Surface((first_image_width, first_image_height), pg.SRCALPHA)
+                    frame.blit(sheet, (0, 0), rect)
+                if count:
+                    rect = pg.Rect(second_image_startx + i * second_image_width, 
+                                   second_image_starty, second_image_width, second_image_height)
+                    frame = pg.Surface((second_image_width, second_image_height), pg.SRCALPHA)
+                    frame.blit(sheet, (0, 0), rect)
+                sprites.append(frame)
+                count += 1
+
+            return sprites
+        except Exception as e:
+            print(f"Errore {e} nel caricare l'immagine")
+
 # Classe bancone
 class Bancone:
     def __init__(self):
@@ -64,7 +98,7 @@ class Bancone:
 
 def get_sprite(x, y, width, height, image):
     sprite_sheet = pg.image.load(image).convert_alpha()
-    sprite_sheet.set_colorkey(color_key)
+    sprite_sheet.set_colorkey(COLORS['color_key'])
 
     rect = pg.Rect(x, y, width, height)
     sprite = pg.Surface((width, height), pg.SRCALPHA)
@@ -72,21 +106,7 @@ def get_sprite(x, y, width, height, image):
 
     return sprite
 
-def get_row_sprites(start_x, start_y, frame_width, frame_height, frame_count, image):
-    try:
-        sheet = pg.image.load(image).convert()
-        sheet.set_colorkey(color_key)
-        sprites = []
 
-        for i in range(frame_count):
-            rect = pg.Rect(start_x + i * frame_width, start_y, frame_width, frame_height)
-            frame = pg.Surface((frame_width, frame_height), pg.SRCALPHA)
-            frame.blit(sheet, (0, 0), rect)
-            sprites.append(frame)
-
-        return sprites
-    except Exception as e:
-        print(f"Errore {e} nel caricare l'immagine")
 
 def avoid_loop_printing(message, count=0):
     count += 1
