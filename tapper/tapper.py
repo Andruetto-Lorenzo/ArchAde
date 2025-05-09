@@ -159,7 +159,7 @@ def main():
 
         elif game_started:
             screen.fill(COLORS['black'])
-            dt = clock.tick(60) / 1000.0
+            dt = clock.tick(60) / 800.0
             bartender.update(dt)
             bartender.draw(screen)
             
