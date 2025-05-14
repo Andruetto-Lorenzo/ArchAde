@@ -75,6 +75,16 @@ def get_out():
             x_positions[i] -= speed
             if x_positions[i] < target_x_out[i]:
                 x_positions[i] = target_x_out[i]
+        
+def build_plants():
+    plant = load_image('building/bush.png')
+    plant = pg.transform.scale(plant, (50, 50))
+    k = 0
+    for i in range(40):
+        screen.blit(plant, (k, 890))
+        k+=50
+
+
 
 class Building:
     def __init__(self):
@@ -101,7 +111,7 @@ class Building:
     def draw(self, surface):
         screen_devided = WIDTH/2 - 900/2
         images = [self.build_bottom, self.build_top, self.brick ,self.build_ledge, self.brick]
-        sizes = [(screen_devided, HEIGHT-225), (screen_devided, HEIGHT-450), (screen_devided, HEIGHT-675), (screen_devided, HEIGHT-705),(screen_devided, HEIGHT-925)]
+        sizes = [(screen_devided, HEIGHT-220), (screen_devided, HEIGHT-445), (screen_devided, HEIGHT-670), (screen_devided, HEIGHT-700),(screen_devided, HEIGHT-920)]
 
         for i in range(self.current_stage):
             surface.blit(images[i], sizes[i])
@@ -149,7 +159,7 @@ def main():
                 running = False
 
         screen.fill('black')
-
+        build_plants()
         if fase == "entrata":
             update_positions()
             stamp(images)
