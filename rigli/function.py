@@ -6,8 +6,6 @@ def img(path):
 def size(val, s):
     return pygame.transform.scale(val, s)
 
-
-
 class Animation:
     def __init__(self, ralph_l, ralph_r, win, bg):
         self.ralph_l = ralph_l
@@ -36,11 +34,11 @@ class Animation:
 
         self.excavator_up = img("excavator_up.png")
         self.excavator_up.set_colorkey((0, 0, 0))
-        self.excavator_up = size(self.excavator_up, (300, 200))
+        self.excavator_up = size(self.excavator_up, (500, 400))
 
         self.excavator_down = img("excavator_down.png")
         self.excavator_down.set_colorkey((0, 0, 0))
-        self.excavator_down = size(self.excavator_down, (330, 190))
+        self.excavator_down = size(self.excavator_down, (530, 390)) #+ 30 -10
 
         self.ralph_out1 = img("ralph_out1.png")
         self.ralph_out1.set_colorkey((0, 0, 128))
@@ -122,9 +120,9 @@ class Animation:
             self.win.blit(self.stump, (self.excavator_x -250, 890))
            
         if (self.frame // 15) % 2 == 0:
-            self.win.blit(self.excavator_up, (self.excavator_x, 789))
+            self.win.blit(self.excavator_up, (self.excavator_x, 600))
         else:
-            self.win.blit(self.excavator_down, (self.excavator_x, 789 + 10))
+            self.win.blit(self.excavator_down, (self.excavator_x, 600 + 10))
 
         if self.excavator_x < -400:  
             info = pygame.display.Info()
@@ -132,7 +130,6 @@ class Animation:
             self.bg = size(self.bg, (1240, info.current_h))
             self.excavator_x = 1000
             self.change = True
-
     
     def dump(self):
         
@@ -142,9 +139,9 @@ class Animation:
 
             self.win.blit(self.stump, (self.excavator_x -210, 890))
             if (self.frame // 15) % 2 == 0:
-                self.win.blit(self.excavator_up, (self.excavator_x, 789))
+                self.win.blit(self.excavator_up, (self.excavator_x, 600))
             else:
-                self.win.blit(self.excavator_down, (self.excavator_x, 789 + 10)) 
+                self.win.blit(self.excavator_down, (self.excavator_x, 600 + 10)) 
 
             if self.excavator_x < 650:
                 self.come_back = True
@@ -154,11 +151,11 @@ class Animation:
             self.excavator_x += self.excavator_speed
 
             if (self.frame // 15) % 2 == 0:
-                self.win.blit(self.excavator_up, (self.excavator_x, 789))
+                self.win.blit(self.excavator_up, (self.excavator_x, 600))
             else:
-                self.win.blit(self.excavator_down, (self.excavator_x, 789 + 10))
+                self.win.blit(self.excavator_down, (self.excavator_x, 600 + 10))
 
-            if self.excavator_x >= 950:
+            if self.excavator_x >= 1500:
                 self.angry = True
 
         self.clock.tick(60)
@@ -178,20 +175,39 @@ class Animation:
             else:
                 self.win.blit(self.ralph_out4, (475, 800))
             
-
         self.clock.tick(60)
         self.frame += 1
         self.angry_count += 1 / 30
 
-
 def main():
 
     pygame.init()
-
+    clock = pygame.time.Clock()
+    frame = 0
+    
     info = pygame.display.Info()
     win = pygame.display.set_mode((1250, info.current_h-100))
     pygame.display.set_caption("fix it felix")
+    title = img("title.png")
+    title = size(title, (800, 370))
+    title.set_colorkey((0, 0, 0))
+    win.blit(title, (250, 100))
 
+    start_img = img("start.png")
+    start_img = size(start_img, (800, 60))
+    start_img.set_colorkey((0, 0, 0))
+    win.blit(start_img, (250, 500))
+    
+    start = True
+    while start:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                start = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    start = False
+        pygame.display.flip()
+        
     bg = img("bg.png")
     bg = size(bg, (1250, info.current_h-200))
 
@@ -213,7 +229,6 @@ def main():
 
         win.fill((0, 0, 0))  
         win.blit(ralph_animation.bg, (0, 100))
-
         if ralph_animation.ralph_x > 530:
             ralph_animation.walk()
         elif ralph_animation.angry:
@@ -222,7 +237,6 @@ def main():
             ralph_animation.dump()
         else:              
             ralph_animation.on_stump()
-
         pygame.display.flip()
 
 main()
