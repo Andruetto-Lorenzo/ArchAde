@@ -96,6 +96,10 @@ class Bancone:
         # self.clienti = 
         pass
 
+class Customer:
+    def __init__(self):
+        pass
+
 def get_sprite(x, y, width, height, image):
     sprite_sheet = pg.image.load(image).convert_alpha()
     sprite_sheet.set_colorkey(COLORS['color_key'])
@@ -105,8 +109,6 @@ def get_sprite(x, y, width, height, image):
     sprite.blit(sprite_sheet, (0, 0), rect)
 
     return sprite
-
-
 
 def avoid_loop_printing(message, count=0):
     count += 1
@@ -126,6 +128,8 @@ def main():
 
     welcoming_menu = pg.image.load("./sprites/tapper_menu.png")
     points = pg.image.load("./sprites/points.png")
+
+    scene = pg.image.load('../tapper/sprites/bar_scene.png')
 
     loading = True
     running = True
@@ -158,7 +162,7 @@ def main():
                 game_started = True
 
         elif game_started:
-            screen.fill(COLORS['black'])
+            screen.blit(scene, (0, 0))
             dt = clock.tick(60) / 800.0
             bartender.update(dt)
             bartender.draw(screen)
