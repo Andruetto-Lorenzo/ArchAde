@@ -4,7 +4,7 @@ import pygame as pg
 pg.init()
 
 # Costanti
-WINDOW_WIDTH, WINDOW_HEIGHT = 1000, 800
+WINDOW_WIDTH, WINDOW_HEIGHT = 512, 480
 TITLE = "Tapper"
 BARISTA_DIR_SHEET = './sprites/Bartender.png'
 
@@ -119,12 +119,12 @@ def avoid_loop_printing(message, count=0):
 def main():
     clock = pg.time.Clock()
 
-    bartender = Bartender(500, 400)
+    bartender = Bartender(320, 100)
 
     font = pg.font.SysFont("tapper", 16)
     press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
     textRect = press_enter.get_rect()
-    textRect.center = (WINDOW_WIDTH // 2, 550)
+    textRect.center = (WINDOW_WIDTH // 2, (WINDOW_HEIGHT // 2) + 60)
 
     welcoming_menu = pg.image.load("./sprites/tapper_menu.png")
     points = pg.image.load("./sprites/points.png")
@@ -149,12 +149,12 @@ def main():
 
         if in_menu:
             screen.fill(COLORS['black'])
-            screen.blit(welcoming_menu, ((WINDOW_WIDTH // 2) / 2, 0))
+            screen.blit(welcoming_menu, (0, 0))
             screen.blit(press_enter, textRect)
 
         elif loading:
             screen.fill(COLORS['blue'])
-            screen.blit(points, ((WINDOW_WIDTH // 2) / 2, (WINDOW_HEIGHT // 2) / 2))            
+            screen.blit(points, (0, 0))            
 
             current_time = pg.time.get_ticks()
             if start_time and current_time - start_time >= LOADING_DURATION:
@@ -162,11 +162,16 @@ def main():
                 game_started = True
 
         elif game_started:
+            screen.fill(COLORS["black"])
             screen.blit(scene, (0, 0))
             dt = clock.tick(60) / 800.0
             bartender.update(dt)
             bartender.draw(screen)
-            
+
+            for event in pg.event.get():
+                if event.type == pg.K_UP:
+                    avoid_loop_printing("freccia in su premuta.")
+
         pg.display.update()
     pg.quit()
 main()
