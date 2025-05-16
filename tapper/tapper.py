@@ -67,9 +67,9 @@ class Bartender:
             first_image_height = 60
 
             second_image_startx  = 2
-            second_image_starty = 42
+            second_image_starty = 41
             second_image_width = 32
-            second_image_height = 60 
+            second_image_height = 62 
 
             count = 0
             for i in range(frame_count):
@@ -119,7 +119,7 @@ def avoid_loop_printing(message, count=0):
 def main():
     clock = pg.time.Clock()
 
-    bartender = Bartender(320, 100)
+    bartender = Bartender(360, 200) # 320 100
 
     font = pg.font.SysFont("tapper", 16)
     press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
@@ -169,8 +169,15 @@ def main():
             bartender.draw(screen)
 
             for event in pg.event.get():
-                if event.type == pg.K_UP:
-                    avoid_loop_printing("freccia in su premuta.")
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_UP:    
+                        avoid_loop_printing("freccia in su premuta.")
+                        bartender.x -= 30
+                        bartender.y -= 100
+                    elif event.key == pg.K_DOWN:
+                        avoid_loop_printing("Freccia giù premuta.")
+                        bartender.x += 30
+                        bartender.y += 100
 
         pg.display.update()
     pg.quit()
