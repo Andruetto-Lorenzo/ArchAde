@@ -170,11 +170,11 @@ def main():
 
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_UP:    
+                    if event.key == pg.K_UP or event.key == pg.K_w:    
                         avoid_loop_printing("freccia in su premuta.")
                         bartender.x -= 30
                         bartender.y -= 100
-                    elif event.key == pg.K_DOWN:
+                    elif event.key == pg.K_DOWN or event.key == pg.K_s:
                         avoid_loop_printing("Freccia giù premuta.")
                         bartender.x += 30
                         bartender.y += 100
