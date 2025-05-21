@@ -141,15 +141,16 @@ class Building:
         surface.blit(self.door_fixed, (screen_devided - 20, HEIGHT-400))
 
 def main():
-    clock = pg.time.Clock()
-    images = retail_images_costruction()
-    building = Building()
+    clock = pg.time.Clock() # clock
+    images = retail_images_costruction() # immagini delle ruspe
+    building = Building() # creazione dell'oggetto 'palazzo'
     fase = "entrata"
     start_time = None
     last_update_time = 0
     count = 0
     running = True
 
+    # ciclo di gioco
     while running:
         clock.tick(60)
         now = pg.time.get_ticks()
