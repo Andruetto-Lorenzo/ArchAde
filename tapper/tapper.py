@@ -57,8 +57,8 @@ class Bartender:
 
     def get_idle_sprites(self, frame_count, image):
         try:
-            sheet = pg.image.load(image).convert()
-            sheet.set_colorkey(COLORS['color_key'])
+            self.sheet = pg.image.load(image).convert()
+            self.sheet.set_colorkey(COLORS['color_key'])
             sprites = []
 
             first_image_startx = 0
@@ -77,12 +77,12 @@ class Bartender:
                     rect = pg.Rect(first_image_startx + i * first_image_width, 
                                    first_image_starty, first_image_width, first_image_height)
                     frame = pg.Surface((first_image_width, first_image_height), pg.SRCALPHA)
-                    frame.blit(sheet, (0, 0), rect)
+                    frame.blit(self.sheet, (0, 0), rect)
                 if count:
                     rect = pg.Rect(second_image_startx + i * second_image_width, 
                                    second_image_starty, second_image_width, second_image_height)
                     frame = pg.Surface((second_image_width, second_image_height), pg.SRCALPHA)
-                    frame.blit(sheet, (0, 0), rect)
+                    frame.blit(self.sheet, (0, 0), rect)
                 sprites.append(frame)
                 count += 1
 
@@ -97,8 +97,53 @@ class Bancone:
         pass
 
 class Customer:
-    def __init__(self):
-        pass
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.width = 20
+        self.height = 20
+
+        self.sprites = self.get_sprites(9, "./sprites/")
+
+    def draw(self, surface):
+        current_sprite = self.current_sprites[self.current_frame]
+        surface.blit(current_sprite, (self.x, self.y))    
+        rect = pg.Rect(self.x,self.y,self.width,self.height)
+    
+    def get_sprites(self, frame_count, image):
+        self.sprites = []   
+        try:
+            self.22ww\sheet = pg.image.load(image).convert()
+            self.sheet.set_colorkey(COLORS['color_key'])
+
+            first_image_startx = 0
+            first_image_starty = 42
+            first_image_width = 32
+            first_image_height = 60
+
+            second_image_startx  = 2
+            second_image_starty = 41
+            second_image_width = 32
+            second_image_height = 62 
+
+            count = 0
+            for i in range(frame_count):
+                if not count:
+                    rect = pg.Rect(first_image_startx + i * first_image_width, 
+                                   first_image_starty, first_image_width, first_image_height)
+                    frame = pg.Surface((first_image_width, first_image_height), pg.SRCALPHA)
+                    frame.blit(self.sheet, (0, 0), rect)
+                if count:
+                    rect = pg.Rect(second_image_startx + i * second_image_width, 
+                                   second_image_starty, second_image_width, second_image_height)
+                    frame = pg.Surface((second_image_width, second_image_height), pg.SRCALPHA)
+                    frame.blit(self.sheet, (0, 0), rect)
+                count += 1
+
+            return self.sprites
+        except Exception as e:
+            print("Errore nel caricare l'immagine")
+            print(f"Errore: {e}")
 
 def get_sprite(x, y, width, height, image):
     sprite_sheet = pg.image.load(image).convert_alpha()
@@ -120,7 +165,7 @@ def main():
     clock = pg.time.Clock()
 
     bartender = Bartender(360, 200) # 320 100
-
+    customer2 = Customer(10, 190)
     font = pg.font.SysFont("tapper", 16)
     press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
     textRect = press_enter.get_rect()
