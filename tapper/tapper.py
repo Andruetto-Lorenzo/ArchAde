@@ -104,11 +104,13 @@ class Customer:
         self.current_sprites = self.sprites
         self.current_frame = 0
         self.animation_speed = 1
+        self.speed = 0.5
+        self.state = "advancing"
 
     def draw(self, surface):
         current_sprite = self.current_sprites[self.current_frame]
         surface.blit(current_sprite, (self.x, self.y))    
-        self.rect = pg.Rect(self.x,self.y,self.width,self.height)
+        self.draw_rect = pg.Rect(self.x,self.y,self.width,self.height)
     
     def get_sprites(self, start_frame_count, frame_count, image):
         self.sprites = []
@@ -135,6 +137,10 @@ class Customer:
         if self.animation_timer >= self.animation_speed:
             self.animation_timer = 0
             self.current_frame = (self.current_frame + 1) % len(self.current_sprites)
+
+    def move(self):
+        if self.state == "advancing":
+            self.x += self.speed
 
 # def get_sprite(x, y, width, height, image):
 #     sprite_sheet = pg.image.load(image).convert_alpha()
@@ -207,6 +213,7 @@ def main():
             customers_dt = clock.tick(50) / 800.0
             customer1.draw(screen)
             customer1.update(customers_dt)
+            customer1.move()
 
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
