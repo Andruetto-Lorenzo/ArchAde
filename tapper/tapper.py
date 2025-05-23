@@ -102,39 +102,52 @@ class Customer:
         self.y = y
         self.width = 20
         self.height = 20
-
-        self.sprites = self.get_sprites(9, "./sprites/customers_saloon.png")
+        self.animation_timer = 0
+        self.sprites = self.get_sprites(0, 4, "./sprites/customers_saloon.png")
+        self.current_sprites = self.sprites
+        self.current_frame = 0
+        self.animation_speed = 1
 
     def draw(self, surface):
         current_sprite = self.current_sprites[self.current_frame]
         surface.blit(current_sprite, (self.x, self.y))    
-        rect = pg.Rect(self.x,self.y,self.width,self.height)
+        self.rect = pg.Rect(self.x,self.y,self.width,self.height)
     
-    def get_sprites(self, frame_count, image):
-        self.sprites = []   
+    def get_sprites(self, start_frame_count, frame_count, image):
+        self.sprites = []
         try:
             self.sheet = pg.image.load(image).convert()
-            self.sheet.set_colorkey(COLORS['color_key']) 
+            self.sheet.set_colorkey(COLORS['color_key'])
+            startx = 0
+            starty = 0
+            for i in range(start_frame_count, frame_count):
+                self.rect = pg.Rect(startx + i * 30, starty, 30, 30) # + i * 30
+                self.frame = pg.Surface((30, 30), pg.SRCALPHA)
+                self.frame.blit(self.sheet, (0, 0), self.rect)
 
-            
-
-            # for i in range(frame_count):
-                
+                self.sprites.append(self.frame)
 
             return self.sprites
         except Exception as e:
             print("Errore nel caricare l'immagine")
             print(f"Errore: {e}")
 
-def get_sprite(x, y, width, height, image):
-    sprite_sheet = pg.image.load(image).convert_alpha()
-    sprite_sheet.set_colorkey(COLORS['color_key'])
+    def update(self, dt):        
+        self.animation_timer += dt
 
-    rect = pg.Rect(x, y, width, height)
-    sprite = pg.Surface((width, height), pg.SRCALPHA)
-    sprite.blit(sprite_sheet, (0, 0), rect)
+        if self.animation_timer >= self.animation_speed:
+            self.animation_timer = 0
+            self.current_frame = (self.current_frame + 1) % len(self.current_sprites)
 
-    return sprite
+# def get_sprite(x, y, width, height, image):
+#     sprite_sheet = pg.image.load(image).convert_alpha()
+#     sprite_sheet.set_colorkey(COLORS['color_key'])
+
+#     rect = pg.Rect(x, y, width, height)
+#     sprite = pg.Surface((width, height), pg.SRCALPHA)
+#     sprite.blit(sprite_sheet, (0, 0), rect)
+
+#     return sprite
 
 def avoid_loop_printing(message, count=0):
     count += 1
@@ -146,7 +159,7 @@ def main():
     clock = pg.time.Clock()
 
     bartender = Bartender(360, 200) # 320 100
-    customer2 = Customer(10, 190)
+    customer1 = Customer(100, 180)
     font = pg.font.SysFont("tapper", 16)
     press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
     textRect = press_enter.get_rect()
@@ -190,9 +203,13 @@ def main():
         elif game_started:
             screen.fill(COLORS["black"])
             screen.blit(scene, (0, 0))
-            dt = clock.tick(60) / 800.0
-            bartender.update(dt)
+            bartender_dt = clock.tick(60) / 800.0
+            bartender.update(bartender_dt)
             bartender.draw(screen)
+
+            customers_dt = clock.tick(50) / 800.0
+            customer1.draw(screen)
+            customer1.update(customers_dt)
 
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
@@ -200,11 +217,19 @@ def main():
                         avoid_loop_printing("freccia in su premuta.")
                         bartender.x -= 30
                         bartender.y -= 100
+
+                        if bartender.x == 300 and bartender.y == 0:
+                            bartender.x = 420
+                            bartender.y = 400
+
                     elif event.key == pg.K_DOWN or event.key == pg.K_s:
                         avoid_loop_printing("Freccia giù premuta.")
                         bartender.x += 30
                         bartender.y += 100
 
+                        if bartender.x == 450 and bartender.y == 500:
+                            bartender.x = 330
+                            bartender.y = 100
         pg.display.update()
     pg.quit()
 main()
