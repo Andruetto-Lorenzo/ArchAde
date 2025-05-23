@@ -25,12 +25,9 @@ class Bartender:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-
         self.sprite_sheet = BARISTA_DIR_SHEET
-
         self.idle_sprites = self.get_idle_sprites(2, BARISTA_DIR_SHEET)
         # self.serving_sprites = get_row_sprites(0, 66, 33, 66, 8, BARISTA_DIR_SHEET)
-
         self.current_sprites = self.idle_sprites
         self.current_frame = 0
         self.animation_speed = 1
@@ -121,8 +118,8 @@ class Customer:
             startx = 0
             starty = 0
             for i in range(start_frame_count, frame_count):
-                self.rect = pg.Rect(startx + i * 30, starty, 30, 30) # + i * 30
-                self.frame = pg.Surface((30, 30), pg.SRCALPHA)
+                self.rect = pg.Rect(startx + i * 33.5, starty, 33.5, 33.5) # + i * 30
+                self.frame = pg.Surface((33.5, 33.5), pg.SRCALPHA)
                 self.frame.blit(self.sheet, (0, 0), self.rect)
 
                 self.sprites.append(self.frame)
@@ -159,7 +156,7 @@ def main():
     clock = pg.time.Clock()
 
     bartender = Bartender(360, 200) # 320 100
-    customer1 = Customer(100, 180)
+    customer1 = Customer(100, 175)
     font = pg.font.SysFont("tapper", 16)
     press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
     textRect = press_enter.get_rect()
