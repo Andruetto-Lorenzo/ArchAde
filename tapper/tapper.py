@@ -1,4 +1,5 @@
 import pygame as pg
+import sys
 
 # Inizializzazione di Pygame
 pg.init()
@@ -100,12 +101,21 @@ class Customer:
         self.width = 20
         self.height = 20
         self.animation_timer = 0
-        self.sprites = self.get_sprites(0, 4, "./sprites/customers_saloon.png")
-        self.current_sprites = self.sprites
+        self.cust_sprites = self.get_sprites(0, 4, "./sprites/customers_saloon.png")
+        self.current_sprites = self.cust_sprites
         self.current_frame = 0
         self.animation_speed = 1
         self.speed = 0.5
-        self.state = "advancing"
+        self.state = "normal"  # "normal" o "angry"
+        self.normal_speed = 0.3   # Velocità normale (lenta)
+        self.angry_speed = 0.8    # Velocità arrabbiato (veloce)
+        self.current_speed = self.normal_speed
+        
+        # Timer per diventare arrabbiato
+        self.patience_timer = 0
+        self.patience_limit = 5000  # 5 secondi prima di arrabbiarsi
+
+
 
     def draw(self, surface):
         current_sprite = self.current_sprites[self.current_frame]
@@ -137,10 +147,38 @@ class Customer:
         if self.animation_timer >= self.animation_speed:
             self.animation_timer = 0
             self.current_frame = (self.current_frame + 1) % len(self.current_sprites)
-
+        
+        if self.current_frame == 0:
+            self.state = "advancing"
+        self.move()
+    
     def move(self):
-        if self.state == "advancing":
-            self.x += self.speed
+        self.x += self.current_speed
+        
+        # Ferma quando raggiunge il bancone (esempio)
+        if self.x >= 350:
+            self.x = 350
+
+    def become_angry(self):
+        if self.state != "angry":
+            self.state = "angry"
+            self.current_sprites = self.angry_sprites
+            self.current_speed = self.angry_speed
+            self.current_frame = 0  # Riparti dal primo frame delle sprite arrabbiate
+
+    def serve_drink(self):
+        self.state = "normal"
+        self.current_sprites = self.normal_sprites
+        self.current_speed = self.normal_speed
+        self.patience_timer = 0
+        self.current_frame = 0
+
+    def is_angry(self):
+        return self.state == "angry"
+
+    # def move(self):
+    #     if self.state == "advancing":
+    #         self.x += self.speed
 
 # def get_sprite(x, y, width, height, image):
 #     sprite_sheet = pg.image.load(image).convert_alpha()
@@ -161,7 +199,7 @@ def avoid_loop_printing(message, count=0):
 def main():
     clock = pg.time.Clock()
 
-    bartender = Bartender(360, 200) # 320 100
+    tapper = Bartender(360, 200) # 320 100
     customer1 = Customer(100, 175)
     font = pg.font.SysFont("tapper", 16)
     press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
@@ -207,33 +245,33 @@ def main():
             screen.fill(COLORS["black"])
             screen.blit(scene, (0, 0))
             bartender_dt = clock.tick(60) / 800.0
-            bartender.update(bartender_dt)
-            bartender.draw(screen)
+            tapper.update(bartender_dt)
+            tapper.draw(screen)
 
             customers_dt = clock.tick(50) / 800.0
             customer1.draw(screen)
             customer1.update(customers_dt)
-            customer1.move()
 
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP or event.key == pg.K_w:    
                         avoid_loop_printing("freccia in su premuta.")
-                        bartender.x -= 30
-                        bartender.y -= 100
+                        tapper.x -= 30
+                        tapper.y -= 100
 
-                        if bartender.x == 300 and bartender.y == 0:
-                            bartender.x = 420
-                            bartender.y = 400
+                        if tapper.x == 300 and tapper.y == 0:
+                            tapper.x = 420
+                            tapper.y = 400
 
                     elif event.key == pg.K_DOWN or event.key == pg.K_s:
                         avoid_loop_printing("Freccia giù premuta.")
-                        bartender.x += 30
-                        bartender.y += 100
+                        tapper.x += 30
+                        tapper.y += 100
 
-                        if bartender.x == 450 and bartender.y == 500:
-                            bartender.x = 330
-                            bartender.y = 100
+                        if tapper.x == 450 and tapper.y == 500:
+                            tapper.x = 330
+                            tapper.y = 100
         pg.display.update()
     pg.quit()
+    sys.exit()
 main()
