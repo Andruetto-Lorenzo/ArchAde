@@ -93,12 +93,17 @@ class Ralph:
         self.ralph_rf = pg.transform.scale(load_image('ralph/ralph_right_foot.png'), (170, 200))
         self.ralph_lf = pg.transform.scale(load_image('ralph/ralph_left_foot.png'), (170, 200))
         self.ralph_rf_flipped = pg.transform.scale(load_image('ralph/ralph_right_f.png'), (170, 200))
+        self.ralph_bad = pg.transform.scale(load_image('ralph/ralph_bad.png'), (170, 200))
+        self.ralph_bas = pg.transform.scale(load_image('ralph/ralph_bas.png'), (170, 200))
         self.ralph_lf_flipped = pg.transform.scale(load_image('ralph/ralph_left_f.png'), (170, 200))
+        # self.ralph_spacca_piano_1 = pg.transform.scale(load_image())
         self.ralph_scale = pg.transform.scale(load_image('ralph/ralph_scale.png'), (170,200))
         self.ralph_x = 0
         self.ralph_y = 740
         self.frame = 0
         self.ralph_speed = 4
+        self.ralph_bad.set_colorkey((0,0,128))
+        self.ralph_bas.set_colorkey((0,0,128))
         self.ralph_rf.set_colorkey((0, 0, 128))
         self.ralph_rf_flipped.set_colorkey((0, 0, 128))
         self.ralph_lf_flipped.set_colorkey((0, 0, 128))
@@ -109,6 +114,11 @@ class Ralph:
     def walk(self, surface):
         if self.ralph_x < 972 and self.ralph_y != 60:
             self.ralph_x += self.ralph_speed
+            if self.ralph_x >= 52 and self.ralph_x <=970:
+                if (self.frame // 15) % 2 == 0:
+                    surface.blit(self.ralph_bad, (self.ralph_x, self.ralph_y))
+                else:
+                    surface.blit(self.ralph_bas, (self.ralph_x, self.ralph_y))
         elif self.ralph_x == 972 and self.ralph_y != 60:
             self.ralph_y -= self.ralph_speed
             surface.blit(self.ralph_scale,(self.ralph_x - 4, self.ralph_y))
@@ -118,9 +128,11 @@ class Ralph:
                 surface.blit(self.ralph_lf_flipped, (self.ralph_x, self.ralph_y))
             elif (self.frame // 15) % 2 != 0:
                 surface.blit(self.ralph_rf_flipped, (self.ralph_x, self.ralph_y))
-        if (self.frame // 15) % 2 == 0 and self.ralph_x != 972 and self.ralph_y != 60:
+        #if (self.frame // 15) % 2 == 0 and self.ralph_x != 972 and self.ralph_y != 60:
+        if (self.frame // 15) % 2 == 0 and self.ralph_x < 52 and self.ralph_y != 60:
             surface.blit(self.ralph_lf, (self.ralph_x, 740))
-        elif (self.frame // 15) % 2 != 0 and self.ralph_x != 972 and self.ralph_y != 60:
+        #elif (self.frame // 15) % 2 != 0 and self.ralph_x != 972 and self.ralph_y != 60:
+        elif (self.frame // 15) % 2 != 0 and self.ralph_x < 52 and self.ralph_y != 60:
             surface.blit(self.ralph_rf, (self.ralph_x, 740))
         # self.clock.tick(60)
         self.frame += 1
@@ -133,8 +145,8 @@ class Building:
         self.build_top = pg.image.load('building/building_cement_top.png')
         self.build_ledge = pg.image.load('building/building_ledge.png')
         self.door_fixed = pg.image.load('door/door_fixed.png')
-        self.window = pg.image.load('windows/windowb.png')
-        self.shutter = pg.image.load('windows/shutter.png')
+        self.window = pg.image.load('windows/window_black.png')
+        self.shutter = pg.image.load('windows/window_closed.png')
         self.flower = pg.image.load('flower.png')
         # self.cloud = retail_cloud()
         self.initialize_building()
@@ -147,6 +159,7 @@ class Building:
         self.build_ledge = pg.transform.scale(self.build_ledge, (900, 30))
         self.door_fixed = pg.transform.scale(self.door_fixed, (150 ,400))
         self.window = pg.transform.scale(self.window, (90 , 190))
+        self.window.set_colorkey('white')
         self.shutter = pg.transform.scale(self.shutter, (90 , 190))
         self.flower = pg.transform.scale(self.flower, (200, 50))
 
@@ -165,9 +178,14 @@ class Building:
                     for col in range(5):
                         x = floor_x + 110 + col * 150
                         y = floor_y + 20 + row * (self.window.get_height() + 20)
-                        surface.blit(self.window, (x, y))
+                        
                         if i >= 4:
                             surface.blit(self.shutter, (x, y))
+                        elif i == 1:
+                            if col != 2:
+                                surface.blit(self.window, (x, y))
+                        else:
+                            surface.blit(self.window, (x, y))                            
             if i == 0:
                 surface.blit(self.flower, (screen_devided + 125,HEIGHT-50))
                 surface.blit(self.flower, (screen_devided + 585,HEIGHT-50))
