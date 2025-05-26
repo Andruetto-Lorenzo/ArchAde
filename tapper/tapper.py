@@ -105,10 +105,10 @@ class Customer:
         self.current_sprites = self.cust_sprites
         self.current_frame = 0
         self.animation_speed = 1
-        self.speed = 0.5
+        self.speed = 30
         self.state = "normal"  # "normal" o "angry"
-        self.normal_speed = 0.3   # Velocità normale (lenta)
-        self.angry_speed = 0.8    # Velocità arrabbiato (veloce)
+        self.normal_speed = 30  # Velocità normale (lenta)
+        self.angry_speed = 30    # Velocità arrabbiato (veloce)
         self.current_speed = self.normal_speed
         
         # Timer per diventare arrabbiato
@@ -155,9 +155,14 @@ class Customer:
     def move(self):
         self.x += self.current_speed
         
-        # Ferma quando raggiunge il bancone (esempio)
-        if self.x >= 350:
-            self.x = 350
+        if self.y == 80 and self.x >= 295:
+            self.x = 295
+        if self.y == 175 and self.x >= 330:
+            self.x = 330
+        if self.y == 271 and self.x >= 360:
+            self.x = 360
+        if self.y == 367 and self.x >= 390:
+            self.x = 390
 
     def become_angry(self):
         if self.state != "angry":
@@ -201,6 +206,9 @@ def main():
 
     tapper = Bartender(360, 200) # 320 100
     customer1 = Customer(100, 175)
+    customer2 = Customer(125, 80)
+    customer3 = Customer(100, 271)
+    customer4 = Customer(100, 367)
     font = pg.font.SysFont("tapper", 16)
     press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
     textRect = press_enter.get_rect()
@@ -251,6 +259,13 @@ def main():
             customers_dt = clock.tick(50) / 800.0
             customer1.draw(screen)
             customer1.update(customers_dt)
+            customer2.draw(screen)
+            customer2.update(customers_dt)
+            customer3.draw(screen)
+            customer3.update(customers_dt)
+            customer4.draw(screen)
+            customer4.update(customers_dt)
+            
 
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
