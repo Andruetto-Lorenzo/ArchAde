@@ -11,6 +11,9 @@ def load_image(path):
 
 def flip_image(img):
      return pg.transform.flip(img, True, False)
+    
+def size(val, s):
+    return pg.transform.scale(val, s)
 
 def retail_cloud(count):
     miscellanous = load_image('../assets/miscellanous.png')
@@ -222,6 +225,107 @@ class Building:
         screen_devided = WIDTH/2 - 100/2
         surface.blit(self.door_fixed, (screen_devided - 20, HEIGHT-400))
 
+class Felix:
+    def __init__(self, win):
+        self.win = win
+        self.felix_up_r = load_image("../rigli/felix_up_r.png")
+        self.felix_up_r.set_colorkey((0, 0, 0))
+        self.felix_up_r = size(self.felix_up_r, (100, 150))
+
+        self.felix_hammer_r = load_image("../rigli/felix_hammer_r.png")
+        self.felix_hammer_r.set_colorkey((0, 0, 0))
+        self.felix_hammer_r = size(self.felix_hammer_r, (100, 150))
+
+        self.felix_up_l = load_image("../rigli/felix_up_l.png")
+        self.felix_up_l.set_colorkey((0, 0, 0))
+        self.felix_up_l = size(self.felix_up_l, (130, 160))         
+
+        self.felix_hammer_l = load_image("../rigli/felix_hammer_l.png")
+        self.felix_hammer_l.set_colorkey((0, 0, 0))
+        self.felix_hammer_l = size(self.felix_hammer_l, (100, 150))  
+
+        self.felix_fix_r = load_image("../rigli/felix_fix_r.png") 
+        self.felix_fix_r.set_colorkey((0, 0, 0))
+        self.felix_fix_r = size(self.felix_fix_r, (140, 140))
+
+        self.felix_fix_l = load_image("../rigli/felix_fix_l.png") 
+        self.felix_fix_l.set_colorkey((0, 0, 0))
+        self.felix_fix_l = size(self.felix_fix_l, (140, 130))
+
+        self.positions = [
+            [(285, 310), (430, 310), (565, 310), (710, 310), (890, 310)],
+            [(285, 535), (420, 535), (555, 535), (720, 535), (890, 535)],
+            [(285, 800), (430, 800), (555, 800), (715, 800), (890, 800)]
+        ]       
+
+        self.row = 2
+        self.col = 0 
+        self.felix_x, self.felix_y = self.positions[self.row][self.col]
+        self.felix_speed = 2
+
+        self.direction = 'right'
+        self.move, self.felix_fix, self.moving = False, False, False
+
+        self.min_x = 200
+        self.max_x = 800
+        self.min_y = 100
+        self.max_y = 800
+
+        self.clock = pg.time.Clock()
+
+    def draw_felix(self):
+        
+        if self.direction == 'right':
+            if self.move:
+                self.win.blit(self.felix_hammer_r, (self.felix_x, self.felix_y))
+            elif self.felix_fix: 
+                self.win.blit(self.felix_fix_r, (self.felix_x, self.felix_y))
+            else:
+                self.win.blit(self.felix_up_r, (self.felix_x, self.felix_y)) 
+
+        elif self.direction == 'left':
+            if self.move:
+                self.win.blit(self.felix_hammer_l, (self.felix_x, self.felix_y))
+            elif self.felix_fix: 
+                self.win.blit(self.felix_fix_l, (self.felix_x -20, self.felix_y+20))
+            else:
+                self.win.blit(self.felix_up_l, (self.felix_x, self.felix_y)) 
+
+    def change_position(self):
+        self.felix_x, self.felix_y = self.positions[self.row][self.col]
+        self.move = True
+        self.moving = True
+
+    def left(self):
+        if self.moving or self.col == 0:
+            return
+        self.col -= 1
+        self.direction = 'left'
+        self.change_position()
+    
+    def right(self):
+        if self.moving or self.col == len(self.positions[0]) - 1:
+            return
+        self.col += 1
+        self.direction = 'right'
+        self.change_position()
+
+    def up(self):
+        if self.moving or self.row == 0:
+            return
+        self.row -= 1
+        self.change_position()
+
+    def down(self):
+        if self.moving or self.row == len(self.positions) - 1:
+            return
+        self.row += 1
+        self.change_position()
+
+    def fix(self):
+        self.felix_fix = True
+
+
 def main():
     clock = pg.time.Clock() # clock
     images = retail_images_costruction() # immagini delle ruspe
@@ -232,6 +336,7 @@ def main():
     last_update_time = 0
     count = 0
     running = True
+    felix = Felix(screen)
 
     # ciclo di gioco
     while running:
@@ -241,6 +346,19 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
+            
+            elif event.type == pg.KEYDOWN:
+                if fase == "felix":
+                    if event.key == pg.K_LEFT:
+                        felix.left()
+                    elif event.key == pg.K_RIGHT:
+                        felix.right()
+                    elif event.key == pg.K_UP:
+                        felix.up()
+                    elif event.key == pg.K_DOWN:
+                        felix.down()
+                    elif event.key == pg.K_f:
+                        felix.fix()
 
         screen.fill('black')
         build_plants()
@@ -275,9 +393,21 @@ def main():
                 if (ralph.ralph_y == 60 and ralph.ralph_x == 572):
                     screen.blit(ralph.ralph_bad,(ralph.ralph_x,ralph.ralph_y))
                     screen.blit(ralph.ralph_bas,(ralph.ralph_x,ralph.ralph_y))
+                if ralph.ralph_x <= 572 and ralph.ralph_y == 60:
+                    fase = 'felix'
             
-            
+        elif fase == 'felix':
+            building.draw(screen)
+            felix.draw_felix()
+
         pg.display.flip()
+        if fase == 'felix':
+            if felix.move or felix.felix_fix:
+                pg.time.delay(250)
+                felix.moving = False
+                felix.move = False
+                felix.felix_fix = False
+        # clock.tick(60)
 
     pg.quit()
 
