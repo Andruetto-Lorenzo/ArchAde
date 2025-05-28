@@ -102,27 +102,27 @@ class Ralph:
         self.ralph_y = 740
         self.frame = 0
         self.ralph_speed = 4
-        self.ralph_bad.set_colorkey((0,0,128))
-        self.ralph_bas.set_colorkey((0,0,128))
+        self.ralph_bad.set_colorkey((0,33,87))
+        self.ralph_bas.set_colorkey((0,33,87))
         self.ralph_rf.set_colorkey((0, 0, 128))
         self.ralph_rf_flipped.set_colorkey((0, 0, 128))
-        self.ralph_lf_flipped.set_colorkey((0, 0, 128))
+        self.ralph_lf_flipped.set_colorkey((0,0,128))
         self.ralph_rf.set_colorkey((0, 0, 128))
         self.ralph_scale.set_colorkey((0, 0, 128))
         self.ralph_lf.set_colorkey((0, 0, 128))
 
     def walk(self, surface):
-        if self.ralph_x < 972 and self.ralph_y != 60:
+        if self.ralph_x < 972 and self.ralph_y != 60: # condizione per ralph al piano terra incrementa la x (lo fa muovere verso destra)
             self.ralph_x += self.ralph_speed
-            if self.ralph_x >= 52 and self.ralph_x <=970:
-                if (self.frame // 15) % 2 == 0:
+            if self.ralph_x >= 52 and self.ralph_x <=970: # ralph spacca le finestre al piano terra
+                if (self.frame // 15) % 2 == 0: # movimento dinamico con cambio di immagini
                     surface.blit(self.ralph_bad, (self.ralph_x, self.ralph_y))
                 else:
                     surface.blit(self.ralph_bas, (self.ralph_x, self.ralph_y))
-        elif self.ralph_x == 972 and self.ralph_y != 60:
+        elif self.ralph_x == 972 and self.ralph_y != 60: # ralph sale le scale 
             self.ralph_y -= self.ralph_speed
             surface.blit(self.ralph_scale,(self.ralph_x - 4, self.ralph_y))
-        if self.ralph_y == 60 and self.ralph_x != 572:
+        if self.ralph_y == 60 and self.ralph_x != 572: # ralph arriva al centro del palazzo
             self.ralph_x -= self.ralph_speed
             if (self.frame // 15) % 2 == 0:
                 surface.blit(self.ralph_lf_flipped, (self.ralph_x, self.ralph_y))
@@ -135,8 +135,38 @@ class Ralph:
         elif (self.frame // 15) % 2 != 0 and self.ralph_x < 52 and self.ralph_y != 60:
             surface.blit(self.ralph_rf, (self.ralph_x, 740))
         # self.clock.tick(60)
-        self.frame += 1
+        self.frame += 1 # incremento counter dei frame
 
+
+def create_windows(i, floor_x, floor_y, window_image, shutter_image, surface):
+    papa = pg.transform.scale(pg.image.load('windows/papa.png'), (45,51))
+    pbpa = pg.transform.scale(pg.image.load('windows/pbpa.png'), (45,49))
+    papb = pg.transform.scale(pg.image.load('windows/papb.png'), (46,46))
+    pbpb = pg.transform.scale(pg.image.load('windows/pbpb.png'), (48,48))
+    papa.set_colorkey('black')
+    pbpa.set_colorkey('black')
+    papb.set_colorkey('black')
+    pbpb.set_colorkey('black')
+    for row in range(1):  
+        for col in range(5):
+            x = floor_x + 110 + col * 150
+            y = floor_y + 20 + row * (window_image.get_height() + 20)
+
+            if i >= 4:
+                surface.blit(shutter_image, (x, y))
+            elif i == 1:
+                if col != 2:
+                    surface.blit(window_image, (x, y))
+                    surface.blit(papa, (x + 23, y + 48))
+                    surface.blit(pbpa,(x + 23, y + 47))
+                    surface.blit(papb,(x + 23, y + 105))
+                    surface.blit(pbpb,(x + 21, y + 105))
+            else:
+                surface.blit(window_image, (x, y))
+                surface.blit(papa, (x + 23, y + 48))
+                surface.blit(pbpa,(x + 23, y + 47))  
+                surface.blit(papb,(x + 23, y + 105))
+                surface.blit(pbpb,(x + 21, y + 105))      
 
 class Building:
     def __init__(self):
@@ -174,18 +204,7 @@ class Building:
             if i != 3:
                 floor_x = screen_devided
                 floor_y = sizes[i][1]
-                for row in range(1):  
-                    for col in range(5):
-                        x = floor_x + 110 + col * 150
-                        y = floor_y + 20 + row * (self.window.get_height() + 20)
-                        
-                        if i >= 4:
-                            surface.blit(self.shutter, (x, y))
-                        elif i == 1:
-                            if col != 2:
-                                surface.blit(self.window, (x, y))
-                        else:
-                            surface.blit(self.window, (x, y))                            
+                create_windows(i, floor_x,floor_y, self.window, self.shutter, surface)            
             if i == 0:
                 surface.blit(self.flower, (screen_devided + 125,HEIGHT-50))
                 surface.blit(self.flower, (screen_devided + 585,HEIGHT-50))
@@ -253,6 +272,10 @@ def main():
             building.draw(screen)
             if ralph.ralph_x <= 972:
                 ralph.walk(screen)
+                if (ralph.ralph_y == 60 and ralph.ralph_x == 572):
+                    screen.blit(ralph.ralph_bad,(ralph.ralph_x,ralph.ralph_y))
+                    screen.blit(ralph.ralph_bas,(ralph.ralph_x,ralph.ralph_y))
+            
             
         pg.display.flip()
 
