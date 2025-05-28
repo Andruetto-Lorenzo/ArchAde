@@ -1,4 +1,5 @@
 import pygame as pg
+import random
 import sys
 
 # Inizializzazione di Pygame
@@ -107,15 +108,13 @@ class Customer:
         self.animation_speed = 1
         self.speed = 30
         self.state = "normal"  # "normal" o "angry"
-        self.normal_speed = 30  # Velocità normale (lenta)
+        self.normal_speed = 0.5  # Velocità normale (lenta)
         self.angry_speed = 30    # Velocità arrabbiato (veloce)
         self.current_speed = self.normal_speed
         
         # Timer per diventare arrabbiato
         self.patience_timer = 0
         self.patience_limit = 5000  # 5 secondi prima di arrabbiarsi
-
-
 
     def draw(self, surface):
         current_sprite = self.current_sprites[self.current_frame]
@@ -128,18 +127,25 @@ class Customer:
             self.sheet = pg.image.load(image).convert()
             self.sheet.set_colorkey(COLORS['color_key'])
             startx = 0
+
             starty = 0
             for i in range(start_frame_count, frame_count):
-                self.rect = pg.Rect(startx + i * 33.5, starty, 33.5, 33.5) # + i * 30
-                self.frame = pg.Surface((33.5, 33.5), pg.SRCALPHA)
-                self.frame.blit(self.sheet, (0, 0), self.rect)
+                if starty == 0:
+                    self.retail(i, startx, starty, 33.5)
+                    self.frame.blit(self.sheet, (0, 0), self.rect)
 
+                if starty == 40:
+                    pass
                 self.sprites.append(self.frame)
 
             return self.sprites
         except Exception as e:
             print("Errore nel caricare l'immagine")
             print(f"Errore: {e}")
+        
+    def retail(self, i, startx, starty, dm):
+        self.rect = pg.Rect(startx + i * dm, starty, dm, dm) # + i * 30
+        self.frame = pg.Surface((dm, dm), pg.SRCALPHA)
 
     def update(self, dt):        
         self.animation_timer += dt
@@ -155,12 +161,19 @@ class Customer:
     def move(self):
         self.x += self.current_speed
         
+        # Clienti del primo bancone
         if self.y == 80 and self.x >= 295:
             self.x = 295
+
+        # Clienti del secondo bancone
         if self.y == 175 and self.x >= 330:
             self.x = 330
+        
+        # Clienti del terzo bancone
         if self.y == 271 and self.x >= 360:
             self.x = 360
+        
+        # Clienti del quarto Bancone
         if self.y == 367 and self.x >= 390:
             self.x = 390
 
