@@ -186,7 +186,7 @@ def main():
     frame = 0
     
     info = pygame.display.Info()
-    win = pygame.display.set_mode((1250, info.current_h-100))
+    win = pygame.display.set_mode((1250, 980))
     pygame.display.set_caption("fix it felix")
     title = img("title.png")
     title = size(title, (800, 370))
