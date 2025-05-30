@@ -28,7 +28,7 @@ class Bartender:
         self.x = x
         self.y = y
         self.sprite_sheet = BARISTA_DIR_SHEET
-        self.idle_sprites = self.get_idle_sprites(2, BARISTA_DIR_SHEET)
+        self.idle_sprites = self.get_sprites(2, "idle", BARISTA_DIR_SHEET)
         # self.serving_sprites = get_row_sprites(0, 66, 33, 66, 8, BARISTA_DIR_SHEET)
         self.current_sprites = self.idle_sprites
         self.current_frame = 0
@@ -54,7 +54,7 @@ class Bartender:
         self.current_sprites = self.idle_sprites
         self.current_frame = 0
 
-    def get_idle_sprites(self, frame_count, image):
+    def get_sprites(self, frame_count, mode, image):
         try:
             self.sheet = pg.image.load(image).convert()
             self.sheet.set_colorkey(COLORS['color_key'])
@@ -71,29 +71,35 @@ class Bartender:
             second_image_height = 62 
 
             count = 0
-            for i in range(frame_count):
-                if not count:
-                    rect = pg.Rect(first_image_startx + i * first_image_width, 
-                                   first_image_starty, first_image_width, first_image_height)
-                    frame = pg.Surface((first_image_width, first_image_height), pg.SRCALPHA)
-                    frame.blit(self.sheet, (0, 0), rect)
-                if count:
-                    rect = pg.Rect(second_image_startx + i * second_image_width, 
-                                   second_image_starty, second_image_width, second_image_height)
-                    frame = pg.Surface((second_image_width, second_image_height), pg.SRCALPHA)
-                    frame.blit(self.sheet, (0, 0), rect)
-                sprites.append(frame)
-                count += 1
 
-            return sprites
+            if mode == "idle":
+                for i in range(frame_count):
+                    if not count:
+                        self.retail(i, first_image_startx, first_image_starty, 
+                                    first_image_width, first_image_height)
+                        self.frame.blit(self.sheet, (0, 0), self.rect)
+                    if count:
+                        self.retail(i, second_image_startx, second_image_starty,
+                                    second_image_width, second_image_height)
+
+                        self.frame.blit(self.sheet, (0, 0), self.rect)
+                    sprites.append(self.frame)
+                    count += 1
+
+                return sprites
+            elif mode == "fillbeer":
+                for i in range(frame_count):
+                    self.retail(i, 0, 45, 64, 82)
+                    self.frame.blit(self.sheet, (0, 0), self.rect)
         except Exception as e:
             print(f"Errore {e} nel caricare l'immagine")
 
-# Classe bancone
-class Bancone:
-    def __init__(self):
-        # self.clienti = 
-        pass
+    def retail(self, i, startx, starty, width, height):
+        self.rect = pg.Rect(startx + i * width, starty, width, height) # + i * 30
+        self.frame = pg.Surface((width, height), pg.SRCALPHA)
+
+    # def fill_beer(self):
+    #     self.
 
 class Customer:
     def __init__(self, x, y):
@@ -299,6 +305,17 @@ def main():
                         if tapper.x == 450 and tapper.y == 500:
                             tapper.x = 330
                             tapper.y = 100
+                        
+                    elif event.key == pg.K_LEFT:
+                        tapper.x -= 30
+                     
+                    elif event.key == pg.K_RIGHT:
+                        tapper.x += 30
+                    
+                    elif event.key == pg.K_SPACE:
+                        avoid_loop_printing("Barra spaziatrice premuta.")
+                        tapper.current_sprites = tapper.get_sprites(8, "fillbeer", BARISTA_DIR_SHEET)
+                        # tapper.fill_beer()
         pg.display.update()
     pg.quit()
     sys.exit()
