@@ -285,32 +285,73 @@ def main():
             customer4.draw(screen)
             customer4.update(customers_dt)
             
-
+            # EVENTI TASTI PREMUTI!
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP or event.key == pg.K_w:    
                         avoid_loop_printing("freccia in su premuta.")
-                        tapper.x -= 30
-                        tapper.y -= 100
+                        if tapper.y == 100:
+                            tapper.x = 300
+                            tapper.y = 0  
 
-                        if tapper.x == 300 and tapper.y == 0:
+                        if tapper.y == 200:
+                            tapper.x = 330
+                            tapper.y = 100
+
+                        elif tapper.y == 300:
+                            tapper.x = 360
+                            tapper.y = 200
+                        
+                        elif tapper.y == 400:
+                            tapper.x = 390
+                            tapper.y = 300
+
+                        if tapper.y == 0:
                             tapper.x = 420
-                            tapper.y = 400
+                            tapper.y = 400   
 
                     elif event.key == pg.K_DOWN or event.key == pg.K_s:
                         avoid_loop_printing("Freccia giù premuta.")
-                        tapper.x += 30
-                        tapper.y += 100
+                        if tapper.y == 100:
+                            tapper.x = 360
+                            tapper.y = 200
 
-                        if tapper.x == 450 and tapper.y == 500:
+                        elif tapper.y == 200:
+                            tapper.x = 390
+                            tapper.y = 300
+
+                        elif tapper.y == 300:
+                            tapper.x = 420
+                            tapper.y = 400
+
+                        elif tapper.y == 400:
+                            tapper.y = 500
+
+                        if tapper.y == 500:
                             tapper.x = 330
                             tapper.y = 100
                         
                     elif event.key == pg.K_LEFT:
                         tapper.x -= 30
+                        if tapper.x <= 90 and tapper.y == 200:
+                            tapper.x = 90
+
+                        elif tapper.x <= 120 and tapper.y == 100:
+                            tapper.x = 120
+
+                        elif tapper.x <= 30 and tapper.y == 400:
+                            tapper.x = 30
+
+                        elif tapper.x <= 60 and tapper.y == 300:
+                            tapper.x = 60
+                        avoid_loop_printing(f"{tapper.x} {tapper.y}")
                      
                     elif event.key == pg.K_RIGHT:
-                        tapper.x += 30
+                        if tapper.x == 330 and tapper.y == 100 or tapper.x == 360 and tapper.y == 200 or tapper.x == 390 and tapper.y == 300 or tapper.x == 420 and tapper.y == 400:
+                            tapper.x = tapper.x  
+                            
+                        else:
+                            tapper.x += 30
                     
                     elif event.key == pg.K_SPACE:
                         avoid_loop_printing("Barra spaziatrice premuta.")
