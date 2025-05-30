@@ -278,7 +278,7 @@ def main():
                         avoid_loop_printing("freccia in su premuta.")
                         print(tapper.x,tapper.y)
                         if tapper.y == 100:
-                            tapper.x == 300
+                            tapper.x = 300
                             tapper.y = 0    
                         if tapper.y == 200:
                             tapper.x = 330

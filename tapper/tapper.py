@@ -111,7 +111,7 @@ class Customer:
         self.cust_sprites = self.get_sprites(0, 4, "./sprites/customers_saloon.png")
         self.current_sprites = self.cust_sprites
         self.current_frame = 0
-        self.animation_speed = 1
+        self.animation_speed = 0.2
         self.speed = 30
         self.state = "normal"  # "normal" o "angry"
         self.normal_speed = 0.5  # Velocità normale (lenta)
@@ -288,7 +288,7 @@ def main():
             # EVENTI TASTI PREMUTI!
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_UP or event.key == pg.K_w:    
+                    if event.key == pg.K_UP or event.key == pg.K_k:    
                         avoid_loop_printing("freccia in su premuta.")
                         if tapper.y == 100:
                             tapper.x = 300
@@ -310,7 +310,7 @@ def main():
                             tapper.x = 420
                             tapper.y = 400   
 
-                    elif event.key == pg.K_DOWN or event.key == pg.K_s:
+                    elif event.key == pg.K_DOWN or event.key == pg.K_j:
                         avoid_loop_printing("Freccia giù premuta.")
                         if tapper.y == 100:
                             tapper.x = 360
@@ -331,7 +331,7 @@ def main():
                             tapper.x = 330
                             tapper.y = 100
                         
-                    elif event.key == pg.K_LEFT:
+                    elif event.key == pg.K_LEFT or event.key == pg.K_h:
                         tapper.x -= 30
                         if tapper.x <= 90 and tapper.y == 200:
                             tapper.x = 90
@@ -344,12 +344,10 @@ def main():
 
                         elif tapper.x <= 60 and tapper.y == 300:
                             tapper.x = 60
-                        avoid_loop_printing(f"{tapper.x} {tapper.y}")
                      
-                    elif event.key == pg.K_RIGHT:
+                    elif event.key == pg.K_RIGHT or event.key == pg.K_l:
                         if tapper.x == 330 and tapper.y == 100 or tapper.x == 360 and tapper.y == 200 or tapper.x == 390 and tapper.y == 300 or tapper.x == 420 and tapper.y == 400:
-                            tapper.x = tapper.x  
-                            
+                            tapper.x = tapper.x
                         else:
                             tapper.x += 30
                     
