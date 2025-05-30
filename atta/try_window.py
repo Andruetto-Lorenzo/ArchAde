@@ -184,6 +184,7 @@ class Building:
         # self.cloud = retail_cloud()
         self.initialize_building()
         self.current_stage = 1  # inizia con la base
+        self.build = False
 
     def initialize_building(self):
         self.brick = pg.transform.scale(self.brick, (900, 225))
@@ -258,10 +259,13 @@ class Felix:
             [(285, 800), (430, 800), (555, 800), (715, 800), (890, 800)]
         ]       
 
+        self.felix_x_entry = 0
+        self.felix_y_entry = 0
+
         self.row = 2
         self.col = 0 
         self.felix_x, self.felix_y = self.positions[self.row][self.col]
-        self.felix_speed = 2
+        self.felix_speed = 5
 
         self.direction = 'right'
         self.move, self.felix_fix, self.moving = False, False, False
@@ -270,7 +274,7 @@ class Felix:
         self.max_x = 800
         self.min_y = 100
         self.max_y = 800
-
+        self.frame = 0
         self.clock = pg.time.Clock()
 
     def draw_felix(self):
@@ -290,6 +294,13 @@ class Felix:
                 self.win.blit(self.felix_fix_l, (self.felix_x -20, self.felix_y+20))
             else:
                 self.win.blit(self.felix_up_l, (self.felix_x, self.felix_y)) 
+    def entrance(self):
+        self.felix_x_entry += self.felix_speed
+        if (self.frame // 15) % 2 == 0:
+            self.win.blit(self.felix_up_r,(self.felix_x_entry, self.felix_y_entry))
+        else:
+            self.win.blit(self.felix_up_l,(self.felix_x_entry, self.felix_y_entry))
+
 
     def change_position(self):
         self.felix_x, self.felix_y = self.positions[self.row][self.col]
@@ -331,6 +342,7 @@ def main():
     images = retail_images_costruction() # immagini delle ruspe
     building = Building() # creazione dell'oggetto 'palazzo'
     ralph = Ralph()
+    felix = Felix(screen)
     fase = "entrata"
     start_time = None
     last_update_time = 0
@@ -379,7 +391,9 @@ def main():
                 if building.is_complete():
                     fase = "uscita"
             stamp(images)
-            retail_cloud(count)
+
+
+                  retail_cloud(count)
             
         elif fase == "uscita":
             building.draw(screen)
@@ -387,7 +401,8 @@ def main():
             stamp(images)
             fase = "ralph"
         elif fase == "ralph":
-            building.draw(screen)
+            if not building.build:
+                building.draw(screen)
             if ralph.ralph_x <= 972:
                 ralph.walk(screen)
                 if (ralph.ralph_y == 60 and ralph.ralph_x == 572):
@@ -395,11 +410,14 @@ def main():
                     screen.blit(ralph.ralph_bas,(ralph.ralph_x,ralph.ralph_y))
                 if ralph.ralph_x <= 572 and ralph.ralph_y == 60:
                     fase = 'felix'
+                    building.build = False
             
         elif fase == 'felix':
             building.draw(screen)
-            felix.draw_felix()
-
+            if felix.felix_x < 285:
+                felix.entrance()
+            else:
+                felix.draw_felix()
         pg.display.flip()
         if fase == 'felix':
             if felix.move or felix.felix_fix:
