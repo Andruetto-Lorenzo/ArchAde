@@ -217,7 +217,7 @@ def main():
     press_enter = font.render("Press ENTER to play", True, COLORS['white'], COLORS['black'])
     textRect = press_enter.get_rect()
     textRect.center = (WINDOW_WIDTH // 2, (WINDOW_HEIGHT // 2) + 60)
-
+    
     welcoming_menu = pg.image.load("./sprites/tapper_menu.png")
     points = pg.image.load("./sprites/points.png")
 
@@ -311,9 +311,13 @@ def main():
                             tapper.y = 100
                     if event.key == pg.K_LEFT:
                         tapper.x -= 30
-                     
+                        print(tapper.x,tapper.y)
                     if event.key == pg.K_RIGHT:
-                        tapper.x += 30
+                        if tapper.x == 330 and tapper.y == 100 or tapper.x == 360 and tapper.y == 200  or tapper.x == 390 and tapper.y == 300 or tapper.x == 420 and tapper.y == 400 :
+                            tapper.x = tapper.x  
+                            
+                        else:
+                            tapper.x += 30
         pg.display.update()
     pg.quit()
     sys.exit()
