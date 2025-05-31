@@ -1,4 +1,5 @@
 import pygame
+import subprocess
 
 def img(path):
     return pygame.image.load(path)
@@ -178,7 +179,8 @@ class Animation:
         self.clock.tick(60)
         self.frame += 1
         self.angry_count += 1 / 30
-
+def avvia_programma():
+    subprocess.run(["python3", "../atta/test.py"])
 def main():
 
     pygame.init()
@@ -226,6 +228,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 loop = False
+                avvia_programma()
 
         win.fill((0, 0, 0))  
         win.blit(ralph_animation.bg, (0, 100))
