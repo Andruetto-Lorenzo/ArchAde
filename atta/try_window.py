@@ -391,9 +391,7 @@ def main():
                 if building.is_complete():
                     fase = "uscita"
             stamp(images)
-
-
-                  retail_cloud(count)
+            retail_cloud(count)
             
         elif fase == "uscita":
             building.draw(screen)
@@ -405,15 +403,16 @@ def main():
                 building.draw(screen)
             if ralph.ralph_x <= 972:
                 ralph.walk(screen)
-                if (ralph.ralph_y == 60 and ralph.ralph_x == 572):
-                    screen.blit(ralph.ralph_bad,(ralph.ralph_x,ralph.ralph_y))
-                    screen.blit(ralph.ralph_bas,(ralph.ralph_x,ralph.ralph_y))
                 if ralph.ralph_x <= 572 and ralph.ralph_y == 60:
                     fase = 'felix'
                     building.build = False
             
         elif fase == 'felix':
-            building.draw(screen)
+            if not building.build:
+                building.draw(screen)
+            if (ralph.ralph_y == 60 and ralph.ralph_x == 572):
+                    screen.blit(ralph.ralph_bad,(ralph.ralph_x,ralph.ralph_y))
+                    # screen.blit(ralph.ralph_bas,(ralph.ralph_x,ralph.ralph_y))
             if felix.felix_x < 285:
                 felix.entrance()
             else:

@@ -184,7 +184,7 @@ class Ralph:
         self.frame += 1 # incremento counter dei frame
 
 
-def create_windows(i, floor_x, floor_y, window_image, shutter_image, surface):
+def create_windows(i, floor_x, floor_y, window_image, shutter_image, surface, broken=False):
     papa = pg.transform.scale(pg.image.load('windows/papa.png'), (45,51))
     pbpa = pg.transform.scale(pg.image.load('windows/pbpa.png'), (45,49))
     papb = pg.transform.scale(pg.image.load('windows/papb.png'), (46,46))
@@ -201,20 +201,28 @@ def create_windows(i, floor_x, floor_y, window_image, shutter_image, surface):
             if i >= 4:
                 surface.blit(shutter_image, (x, y))
             elif i == 1:
-                if col != 2:
+                if col != 2 and not broken:
                     surface.blit(window_image, (x, y))
                     surface.blit(papa, (x + 23, y + 48))
                     surface.blit(pbpa,(x + 23, y + 47))
                     surface.blit(papb,(x + 23, y + 105))
                     surface.blit(pbpb,(x + 21, y + 105))
-            else:
+                else:
+                    surface.blit(window_image, (x, y))
+                    surface.blit(pbpa,(x + 23, y + 47))
+                    surface.blit(papb,(x + 23, y + 105))
+            elif not broken:
                 surface.blit(window_image, (x, y))
                 surface.blit(papa, (x + 23, y + 48))
                 surface.blit(pbpa,(x + 23, y + 47))  
                 surface.blit(papb,(x + 23, y + 105))
-                surface.blit(pbpb,(x + 21, y + 105))      
+                surface.blit(pbpb,(x + 21, y + 105))
+            else:
+                surface.blit(window_image, (x, y))
+                surface.blit(pbpa,(x + 23, y + 47))
+                surface.blit(papb,(x + 23, y + 105))      
 
-class Building:
+class Building():
     def __init__(self):
         self.brick = pg.image.load('building/building_brick.png')
         self.build_bottom = pg.image.load('building/building_cement_bottom.png')
@@ -239,7 +247,7 @@ class Building:
         self.shutter = pg.transform.scale(self.shutter, (90 , 190))
         self.flower = pg.transform.scale(self.flower, (200, 50))
 
-    def draw(self, surface):
+    def draw(self, surface, ralph_cont=0):
         #screen_devided = WIDTH/2 - 900/2
         screen_devided = WIDTH/2 - 900/2
         images = [self.build_bottom, self.build_top, self.brick ,self.build_ledge, self.brick]
@@ -250,7 +258,7 @@ class Building:
             if i != 3:
                 floor_x = screen_devided
                 floor_y = sizes[i][1]
-                create_windows(i, floor_x,floor_y, self.window, self.shutter, surface)            
+                create_windows(i, floor_x,floor_y, self.window, self.shutter, surface, True if ralph_cont >= 5 else False)            
             if i == 0:
                 surface.blit(self.flower, (screen_devided + 125,HEIGHT-50))
                 surface.blit(self.flower, (screen_devided + 585,HEIGHT-50))
@@ -436,7 +444,7 @@ def main():
                 fase = "felix"
             
         elif fase == 'felix':
-            building.draw(screen)
+            building.draw(screen, ralph.count)
             felix.draw_felix()
 
         
